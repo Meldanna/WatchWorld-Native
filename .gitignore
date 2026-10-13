@@ -1,0 +1,39 @@
+# ---- Gradle / Kotlin ----
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+.kotlin/
+kotlin-js-store/
+
+# 含本机 SDK 路径，绝不提交
+local.properties
+
+# ---- IDE ----
+.idea/
+*.iml
+*.ipr
+*.iws
+.fleet/
+.vscode/
+
+# ---- 工具本地状态（含本机绝对路径与会话记录，不进公开仓）----
+.claude/
+.freebuff/
+.playwright-mcp/
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- 密钥 / 日志 ----
+*.log
+.env*
+# 模板文件在任何层级都保留（如 fixtures/.env.example）
+!**/.env.example
+
+# ---- 采集临时产物 ----
+# fixtures/ 下的正式资产要提交；只忽略临时抓包草稿
+fixtures/**/*.tmp
+fixtures/**/*.raw
+fixtures/**/scratch-*
+fixtures/sse/_rejected/

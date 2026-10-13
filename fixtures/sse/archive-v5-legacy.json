@@ -1,0 +1,515 @@
+{
+  "version": 5,
+  "exportTime": 1790845299137,
+  "providers": [
+    {
+      "id": "provider-gemini",
+      "name": "Google Gemini",
+      "type": "gemini",
+      "baseUrl": "",
+      "apiKey": "",
+      "models": [
+        "gemini-3.8-flash",
+        "gemini-3.8-pro"
+      ],
+      "defaultModel": "gemini-3.8-flash"
+    },
+    {
+      "id": "provider-openai",
+      "name": "OpenAI 官方",
+      "type": "openai",
+      "baseUrl": "https://api.openai.com/v1",
+      "apiKey": "",
+      "models": [
+        "gpt-4o",
+        "gpt-4o-mini",
+        "o3-mini"
+      ],
+      "defaultModel": "gpt-4o-mini"
+    },
+    {
+      "id": "provider-deepseek",
+      "name": "DeepSeek 深度求索",
+      "type": "deepseek",
+      "baseUrl": "https://api.deepseek.com/v1",
+      "apiKey": "",
+      "models": [
+        "deepseek-chat",
+        "deepseek-reasoner"
+      ],
+      "defaultModel": "deepseek-chat"
+    },
+    {
+      "id": "provider-claude",
+      "name": "Anthropic Claude",
+      "type": "claude",
+      "baseUrl": "https://api.anthropic.com/v1",
+      "apiKey": "",
+      "models": [
+        "claude-3-7-sonnet-20250219",
+        "claude-3-5-haiku-20241022"
+      ],
+      "defaultModel": "claude-3-7-sonnet-20250219"
+    },
+    {
+      "id": "provider-ollama",
+      "name": "Ollama (本地/NAS模型)",
+      "type": "ollama",
+      "baseUrl": "http://localhost:11434/v1",
+      "apiKey": "ollama",
+      "models": [
+        "llama3.3",
+        "qwen2.5:14b",
+        "deepseek-r1:8b"
+      ],
+      "defaultModel": "qwen2.5:14b"
+    }
+  ],
+  "groups": [
+    {
+      "id": "group-default",
+      "name": "默认分组",
+      "color": "#64748b",
+      "icon": "Folder",
+      "order": 0
+    },
+    {
+      "id": "group-coding",
+      "name": "编程开发",
+      "color": "#3b82f6",
+      "icon": "Code",
+      "order": 1
+    },
+    {
+      "id": "group-writing",
+      "name": "文案润色",
+      "color": "#8b5cf6",
+      "icon": "Feather",
+      "order": 2
+    },
+    {
+      "id": "group-ideas",
+      "name": "灵感脑洞",
+      "color": "#f59e0b",
+      "icon": "Lightbulb",
+      "order": 3
+    },
+    {
+      "id": "group-roleplay",
+      "name": "角色扮演",
+      "color": "#ec4899",
+      "icon": "Smile",
+      "order": 4
+    }
+  ],
+  "agents": [
+    {
+      "id": "agent-omni",
+      "name": "观界·全能主顾问",
+      "avatar": "🌌",
+      "description": "轻量级多时间线世界观交互核心，擅长人物心理动力学与剧情因果推演。",
+      "systemPrompt": "你是一款专注于多时间线世界观交互的专业顾问。\n核心场景：围绕同一个世界观展开多条时间线的讨论，聊人物与事件，而非写小说式的剧情。\n风格准则：\n1. 恪守逻辑严密性与人性因果链，杜绝降智剧情与浮于表面的客套；\n2. 当记忆整理功能开启时，请主动识别分歧线并提议分支标签（如：建议新分支 [A12·下药线·感情上头]）；\n3. 严格遵循当前激活分支的事实因果，绝不与其他平行时间线产生混淆。",
+      "temperature": 0.7,
+      "topP": 0.95,
+      "isDefault": true
+    },
+    {
+      "id": "agent-psychologist",
+      "name": "角色心理与博弈分析师",
+      "avatar": "♟️",
+      "description": "独立于主聊天的分析 Agent，对角色间关系进行专业心理学与深层博弈研判。",
+      "systemPrompt": "你是一位精通角色心理学、人格动力学与博弈论的资深顾问。\n你的职责是深入剖析角色的核心驱动力、真实防御机制、隐秘恐惧与软肋，以及双边/多边关系动态与权力平衡。",
+      "temperature": 0.5,
+      "topP": 0.9
+    }
+  ],
+  "prompts": [
+    {
+      "id": "prompt-worldview-grounding",
+      "title": "世界观基石固定提示词",
+      "category": "世界观",
+      "content": "【世界观核心铁律】\n1. 人物行为遵循其真实动机与利益博弈，不强行剧情杀或机械降神；\n2. 凡已确认为「通用」的事实记录，所有分支时间线均同等继承；\n3. 分支时间线仅在分歧点后演化独立事件。",
+      "description": "可直接作为【本身的提示词】常驻生效"
+    }
+  ],
+  "regexRules": [
+    {
+      "id": "rule-strip-summary",
+      "name": "分离隐藏正文 (只留总结省Token)",
+      "pattern": "<正文>[\\s\\S]*?<\\/正文>",
+      "flags": "g",
+      "replacement": "",
+      "scope": "output",
+      "enabled": false,
+      "description": "配合 <总结> 与 <正文> 标签，对AI隐藏正文只留总结，大幅降低上下文Token"
+    },
+    {
+      "id": "rule-clean-politeness",
+      "name": "剔除客套与AI腔调",
+      "pattern": "^(当然|好的|很高兴为您解答|作为一个AI|如您所说)[，,。！!\\s]*",
+      "flags": "gm",
+      "replacement": "",
+      "scope": "output",
+      "enabled": true,
+      "description": "自动清除开头废话，保持干练专业的交互节奏"
+    }
+  ],
+  "knowledgeBase": [
+    {
+      "id": "kb-quick-notes",
+      "title": "观界工作台·使用指南",
+      "content": "1. 楼号系统：每条消息强制标注递增楼号 [#1] [#2]，作为唯一精准定位符。\n2. 双标签系统：支持编号标签（如 A1, A12）与人类可读描述标签（如 下药线·感情上头）。\n3. 消息重排中间件：发送给AI前，纯程序按 通用 -> 父分支 -> 子分支 重排，当前分支始终在序列最末尾，最大化命中 API Prefix Cache。\n4. 角色关系分析：随时点击「分析角色关系」按钮，调动独立心理学 Agent，不污染主聊天。\n5. WebDAV：可配置坚果云、Nextcloud，实现零广告无后台的跨设备云端安全同步。",
+      "tags": [
+        "操作指南",
+        "观界"
+      ],
+      "enabled": true,
+      "updatedAt": 1790844784743
+    }
+  ],
+  "theme": "emerald",
+  "uiMode": "light",
+  "mcpServers": [
+    {
+      "id": "mcp-filesystem",
+      "name": "文件系统服务 (File-System MCP)",
+      "type": "sse",
+      "endpoint": "http://localhost:3001/sse",
+      "enabled": true,
+      "status": "connected",
+      "description": "针对文游场景：安全读取本地设定文档、大纲与参考材料",
+      "tools": [
+        {
+          "name": "read_worldview_file",
+          "description": "读取本地世界观设定文档"
+        },
+        {
+          "name": "list_directory_notes",
+          "description": "遍历剧本目录笔记"
+        }
+      ]
+    },
+    {
+      "id": "mcp-database",
+      "name": "数据查询服务 (SQLite MCP)",
+      "type": "custom_api",
+      "endpoint": "http://localhost:3002/query",
+      "enabled": true,
+      "status": "connected",
+      "description": "针对文游场景：标签树、因果关系链与消息记录的结构化查询",
+      "tools": [
+        {
+          "name": "query_timeline_tree",
+          "description": "查询多分支时间线树结构"
+        },
+        {
+          "name": "find_character_events",
+          "description": "查询指定角色在所有时间线中的大事件"
+        }
+      ]
+    },
+    {
+      "id": "mcp-web-search",
+      "name": "网络检索服务 (Web-Search MCP)",
+      "type": "sse",
+      "endpoint": "http://localhost:3003/sse",
+      "enabled": true,
+      "status": "connected",
+      "description": "针对文游场景：联网搜索历史典故、军事科技、民俗等背景资料",
+      "tools": [
+        {
+          "name": "search_lore_reference",
+          "description": "搜索世界观参考资料"
+        }
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "id": "skill-timeline-analysis",
+      "name": "时间线梳理 (因果链整理)",
+      "icon": "⏳",
+      "description": "整理当前分支的事件因果链，理清前因后果与关键分歧。",
+      "triggerKeywords": [
+        "梳理",
+        "时间线",
+        "因果",
+        "线索",
+        "发生过什么"
+      ],
+      "systemInstructionInjection": "【激活 Skill: 时间线梳理】请按照时间先后顺序与严密的因果链条，列出本时间线分支的「触发起因 -> 关键决策 -> 连锁反应 -> 当前局势」，标注对应楼号。",
+      "systemInstruction": "【激活 Skill: 时间线梳理】请按照时间先后顺序与严密的因果链条，列出本时间线分支的「触发起因 -> 关键决策 -> 连锁反应 -> 当前局势」，标注对应楼号。",
+      "enabled": true,
+      "isBuiltin": true
+    },
+    {
+      "id": "skill-role-relationship",
+      "name": "角色关系分析 (情感演变)",
+      "icon": "👥",
+      "description": "分析角色间真实关系、权力博弈与隐秘情感态度变化。",
+      "triggerKeywords": [
+        "关系",
+        "角色",
+        "人物",
+        "心理",
+        "怎么看"
+      ],
+      "systemInstructionInjection": "【激活 Skill: 角色关系分析】剖析涉及角色的真实心理动机、表面伪装、对彼此的信任度打分（0-100）及隐性防备。",
+      "systemInstruction": "【激活 Skill: 角色关系分析】剖析涉及角色的真实心理动机、表面伪装、对彼此的信任度打分（0-100）及隐性防备。",
+      "enabled": true,
+      "isBuiltin": true
+    },
+    {
+      "id": "skill-worldview-consistency",
+      "name": "世界观一致性检查 (查矛盾)",
+      "icon": "🔍",
+      "description": "检查设定与角色言行是否存在吃书、前后矛盾或破绽。",
+      "triggerKeywords": [
+        "矛盾",
+        "一致性",
+        "检查",
+        "吃书",
+        "合理吗",
+        "逻辑漏洞"
+      ],
+      "systemInstructionInjection": "【激活 Skill: 一致性检查】深度核对当前言行与此前通用世界观及父级时间线设定，明确指出潜在的逻辑冲突点并给出合理解释建议。",
+      "systemInstruction": "【激活 Skill: 一致性检查】深度核对当前言行与此前通用世界观及父级时间线设定，明确指出潜在的逻辑冲突点并给出合理解释建议。",
+      "enabled": true,
+      "isBuiltin": true
+    },
+    {
+      "id": "skill-deep-research",
+      "name": "Deep Research 联网调研",
+      "icon": "🌐",
+      "description": "获取真实历史、军事战术、民俗哲学等参考资料。",
+      "triggerKeywords": [
+        "搜索",
+        "查一下",
+        "调研",
+        "资料",
+        "考据"
+      ],
+      "systemInstructionInjection": "【激活 Skill: 深度调研】请以严谨考据风格，梳理真实世界相关的典故制度与专业资料，供世界观搭建参考。",
+      "systemInstruction": "【激活 Skill: 深度调研】请以严谨考据风格，梳理真实世界相关的典故制度与专业资料，供世界观搭建参考。",
+      "enabled": true,
+      "isBuiltin": true
+    },
+    {
+      "id": "skill-doc-generate",
+      "name": "设定文档生成 (归档)",
+      "icon": "📑",
+      "description": "将当前对话成果整理为结构化世界观或人物卡设定文档。",
+      "triggerKeywords": [
+        "整理",
+        "文档",
+        "归档",
+        "建档",
+        "设定集"
+      ],
+      "systemInstructionInjection": "【激活 Skill: 设定文档生成】将讨论成果提取为 Markdown 格式的完整设定卡，包含：基本信息、核心特质、关系网、关键事件节点。",
+      "systemInstruction": "【激活 Skill: 设定文档生成】将讨论成果提取为 Markdown 格式的完整设定卡，包含：基本信息、核心特质、关系网、关键事件节点。",
+      "enabled": true,
+      "isBuiltin": true
+    }
+  ],
+  "displaySettings": {
+    "showModelName": true,
+    "showMessageTime": true,
+    "showLatency": true,
+    "showSessionTokens": true,
+    "showMessageTokens": true,
+    "showTimelineTag": true
+  },
+  "webdavConfig": {
+    "enabled": false,
+    "url": "",
+    "username": "",
+    "password": "",
+    "syncPath": "/guanjie_backup.json",
+    "autoSync": false,
+    "syncStatus": "idle"
+  },
+  "worldDocuments": [
+    {
+      "id": "doc-default-worldview",
+      "title": "世界观总览·核心架构设定",
+      "category": "worldview",
+      "content": "# 世界观总纲设定\n\n## 1. 核心世界法则\n- 科技/力量体系：遵循严密守恒定律，任何非凡力量或科技爆发皆有不可逆代价；\n- 地缘与权力架构：三大主要势力处于冷战均势，边境小国成为博弈缓冲带；\n- 通用事实：所有时间线分支在此基础设定上分化，底层规则全域生效。\n\n## 2. 关键历史节点\n- 纪元前12年：旧秩序瓦解条约签署；\n- 纪元前3年：新矿物能源发现，平衡被暗中打破；\n- 现今：风暴前夕。",
+      "createdAt": 1790841614295,
+      "updatedAt": 1790841614295,
+      "tags": [
+        "世界观",
+        "核心总纲"
+      ]
+    },
+    {
+      "id": "doc-default-characters",
+      "title": "核心主要人物速查档案",
+      "category": "character",
+      "content": "# 核心人物设定速查表\n\n### 主角 (阿尔文)\n- **核心动机**：探查家族覆灭真相，在各方势力夹缝中求生；\n- **性格特质**：外表随和，内心极度克制，习惯性多重留手；\n- **弱点与恐惧**：过分依赖理智，难以应对超出预料的纯粹情感爆发。\n\n### 对手/盟友 (海伦娜)\n- **核心动机**：重构帝国军工体系，阻止战争爆发；\n- **防御机制**：冷酷实用主义，凡事以损耗比衡量。",
+      "createdAt": 1790843414295,
+      "updatedAt": 1790843414295,
+      "tags": [
+        "人物卡",
+        "档案"
+      ]
+    }
+  ],
+  "sessions": [
+    {
+      "id": "session-welcome",
+      "title": "欢迎来到「观界」多时间线工作台",
+      "groupId": "group-default",
+      "agentId": "agent-omni",
+      "providerId": "provider-gemini",
+      "model": "gemini-3.8-flash",
+      "aiContextVisibility": "all",
+      "uiRenderLimit": 0,
+      "connectedKnowledgeIds": [
+        "kb-quick-notes"
+      ],
+      "connectedSkillIds": [
+        "skill-timeline-analysis",
+        "skill-role-relationship"
+      ],
+      "timelineMemoryEnabled": true,
+      "activeTimelineId": "timeline-main",
+      "tagDisplayMode": "desc",
+      "systemPromptFixed": "你正在使用「观界」进行多时间线推演。请遵循逻辑严密的世界观因果法则。",
+      "timelines": [
+        {
+          "id": "timeline-main",
+          "name": "通用世界观",
+          "tag": "通用",
+          "codeTag": "通用",
+          "descriptionTag": "通用世界观",
+          "visible": true,
+          "color": "indigo",
+          "description": "核心共享世界观与通用事实设定。所有分支均继承此通用基础。\n• 本分支因果节点（当前共 1 个关键里程碑）。",
+          "plotSummary": "[[REDACTED_MESSAGE_BODY len=136]]",
+          "keyMilestones": [
+            "世界观核心基石建立"
+          ],
+          "messageIds": [
+            "msg-welcome-ai",
+            "msg-u-1790845091198",
+            "msg-a-1790845091199",
+            "msg-u-1790845111193",
+            "msg-a-1790845111194"
+          ],
+          "createdAt": 1790844664743,
+          "updatedAt": 1790845111213
+        }
+      ],
+      "createdAt": 1790844784743,
+      "updatedAt": 1790845111195,
+      "messages": [
+        {
+          "id": "msg-welcome-ai",
+          "role": "assistant",
+          "timelineId": "timeline-main",
+          "timelineTag": "通用",
+          "floorNumber": 1,
+          "codeTag": "通用",
+          "descriptionTag": "通用世界观",
+          "isCommon": true,
+          "currentVersionIndex": 0,
+          "versions": [
+            {
+              "content": "[[REDACTED_MESSAGE_BODY len=514]]",
+              "timestamp": 1790844664743,
+              "model": "gemini-3.8-flash",
+              "providerName": "Google Gemini",
+              "latencyMs": 680,
+              "tokens": 380
+            }
+          ],
+          "content": "",
+          "timestamp": 1790844664743,
+          "latencyMs": 680,
+          "tokens": 380
+        },
+        {
+          "id": "msg-u-1790845091198",
+          "role": "user",
+          "content": "[[REDACTED_MESSAGE_BODY len=4]]",
+          "timestamp": 1790845091198,
+          "tokens": 5,
+          "versions": [],
+          "currentVersionIndex": 0,
+          "timelineId": "timeline-main",
+          "timelineTag": "通用",
+          "floorNumber": 2,
+          "codeTag": "通用",
+          "descriptionTag": "通用世界观",
+          "isCommon": true
+        },
+        {
+          "id": "msg-a-1790845091199",
+          "role": "assistant",
+          "content": "",
+          "timestamp": 1790845091198,
+          "currentVersionIndex": 0,
+          "timelineId": "timeline-main",
+          "timelineTag": "通用",
+          "floorNumber": 3,
+          "codeTag": "通用",
+          "descriptionTag": "通用世界观",
+          "isCommon": true,
+          "versions": [
+            {
+              "content": "[[REDACTED_MESSAGE_BODY len=234]]",
+              "timestamp": 1790845091198,
+              "model": "gemini-3.8-flash",
+              "providerName": "Google Gemini",
+              "latencyMs": 28,
+              "tokens": 223
+            }
+          ],
+          "latencyMs": 28,
+          "tokens": 223
+        },
+        {
+          "id": "msg-u-1790845111193",
+          "role": "user",
+          "content": "[[REDACTED_MESSAGE_BODY len=4]]",
+          "timestamp": 1790845111194,
+          "tokens": 5,
+          "versions": [],
+          "currentVersionIndex": 0,
+          "timelineId": "timeline-main",
+          "timelineTag": "通用",
+          "floorNumber": 4,
+          "codeTag": "通用",
+          "descriptionTag": "通用世界观",
+          "isCommon": true
+        },
+        {
+          "id": "msg-a-1790845111194",
+          "role": "assistant",
+          "content": "",
+          "timestamp": 1790845111194,
+          "currentVersionIndex": 0,
+          "timelineId": "timeline-main",
+          "timelineTag": "通用",
+          "floorNumber": 5,
+          "codeTag": "通用",
+          "descriptionTag": "通用世界观",
+          "isCommon": true,
+          "versions": [
+            {
+              "content": "[[REDACTED_MESSAGE_BODY len=234]]",
+              "timestamp": 1790845111194,
+              "model": "gemini-3.8-flash",
+              "providerName": "Google Gemini",
+              "latencyMs": 19,
+              "tokens": 223
+            }
+          ],
+          "latencyMs": 19,
+          "tokens": 223
+        }
+      ]
+    }
+  ]
+}

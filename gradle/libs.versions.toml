@@ -1,0 +1,84 @@
+# 版本集中管理 —— 对应 KOTLIN_MIGRATION_PLAN.md §2.1
+#
+# 改动前先看 docs/FILE_LAYOUT.md 与 memory/gotchas.md：
+#   - Kotlin / Compose 必须成对升级（Compose Compiler 由 Kotlin 插件自带，version.ref = kotlin）
+#   - Gradle wrapper 固定在 8.14.3（本机已缓存）；Kotlin 2.4.20 支持 Gradle 7.6.3–9.7.0
+#   - 升级 Kotlin 前先查兼容表：https://kotlinlang.org/docs/multiplatform/multiplatform-compatibility-guide.html
+
+[versions]
+kotlin = "2.4.20"
+composeMultiplatform = "1.12.1"
+# ⚠️ material3 有【独立版本线】，不等于 Compose Multiplatform 插件版本。
+# 1.9.0 是 Compose MP 1.12.1 为 `compose.material3` 选定的版本。
+# 升级 Compose MP 时【必须】重新核对，方法：
+#   ./gradlew :shared:dependencies --configuration desktopCompileClasspath
+composeMaterial3 = "1.9.0"
+# compose-icons (DevSrSouza)：Tabler Icons 线条风格，和 Web 版 Lucide 几乎相同
+composeIcons = "1.1.1"
+jvmTarget = "21"
+
+# ---- T13 Markdown 渲染库（决策 #2 定案）----
+# mikepenz multiplatform-markdown-renderer：Compose 原生、KMP 双端可用；
+# 0.42+ 起自带 StreamingMarkdownState（追加式，只重解析不稳定尾部）—— 直接对上 PLAN §7.3。
+# 0.45.0 面向 Compose Multiplatform 1.12.0 / Kotlin 2.4.x（与本仓 1.12.1 / 2.4.20 同线）。
+markdownRenderer = "0.45.0"
+
+# ---- T03 协议层（PLAN §2.1 版本锁定）----
+# Ktor 3.6.0：ByteReadChannel 流式成熟（PLAN §6.1 真流式的基础）
+ktor = "3.6.0"
+# kotlinx-serialization-json：PLAN §2.1 标 1.9.x。T03 只用 JsonElement 读写，
+# T05 起启用编译器插件 kotlinSerialization（@Serializable 数据类，version.ref = kotlin）。
+kotlinxSerialization = "1.9.0"
+kotlinxCoroutines = "1.10.2"
+
+# ---- T07 存储层（PLAN §2.2 的「未决决策 #1」在此定案：Room KMP）----
+# 2026-10-07 用探针工程实测：Kotlin 2.4.20 + KSP 2.3.12 + Room 2.8.5 + sqlite-bundled 2.7.1
+# 在桌面 JVM 上「编译 + 建库 + 关库重开读回」全通过，因此不需要退到 PLAN §2.1 的 SQLDelight 备选。
+room = "2.8.5"
+# ⚠️ KSP 从 2.3.0 起**不再跟随 Kotlin 版本号**（2.2.x 之前是 `<kotlin>-<ksp>` 形式）。
+# 2.3.12 是 Maven Central 当前的 latest/release；它自己 built against kotlin-stdlib 2.3.20，
+# 但与 Kotlin **2.4.20** 搭配实测可用 —— 升级 Kotlin 时重跑一次探针即可确认，不要凭版本号推断。
+ksp = "2.3.12"
+# room-runtime 底下的 SQLite 驱动接口；bundled = 自带原生 SQLite，桌面/Android 通用。
+androidxSqlite = "2.7.1"
+
+
+[libraries]
+# Compose MP 1.12 起 compose.runtime / .foundation / .material3 / .ui 这些 DSL 访问器已弃用
+# （"Specify dependency directly"），因此改为直接写坐标。
+# compose.desktop.currentOs / compose.desktop.application 未弃用，继续用 DSL
+# （它要按当前操作系统选产物，写死坐标会丢跨平台性）。
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
+# Tabler Icons：线条风格图标集，用于侧边栏导航和 TopBar
+compose-icons-tabler = { module = "br.com.devsrsouza.compose.icons:tabler-icons", version.ref = "composeIcons" }
+
+# ---- T13 Markdown 渲染库（核心 + Material3 主题模块）----
+compose-markdown = { module = "com.mikepenz:multiplatform-markdown-renderer", version.ref = "markdownRenderer" }
+compose-markdown-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "markdownRenderer" }
+
+# Ktor：桌面与 Android 统一用 OkHttp 引擎（PLAN §2.3）——行为一致性优先于引擎特性
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+# ---- T07 存储层 ----
+# room-runtime 是 KMP 产物（commonMain 可用）；room-compiler 只在 KSP 配置里出现，不进任何源集。
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+# 驱动实现放平台源集（desktopMain），commonMain 只依赖 room-runtime 带出来的 androidx.sqlite 接口。
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "androidxSqlite" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+
+[plugins]
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+# 提供 room { schemaDirectory(...) }：把每次的表结构导出成 schema JSON，将来写 Migration 要靠它。
+room = { id = "androidx.room", version.ref = "room" }
